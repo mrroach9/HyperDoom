@@ -1,0 +1,17 @@
+language: cpp
+compiler: clang
+branches:
+  only:
+  - master
+  - "/^v\\d+\\./"
+os:
+- linux
+
+before_script:
+- cd renderer && mkdir .build && cd .build
+
+script:
+- cmake ..
+
+notifications:
+- email: false
