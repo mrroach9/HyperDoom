@@ -8,8 +8,18 @@ branches:
 os:
 - linux
 
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports # cmake 3.2.3 / doxygen 1.8.3
+    packages:
+      - cmake
+      - cmake-data
+
 before_script:
 - cd renderer && mkdir .build && cd .build
+- pwd
+- cmake --version
 
 script:
 - cmake ..
