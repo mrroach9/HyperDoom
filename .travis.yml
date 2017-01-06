@@ -17,7 +17,7 @@ addons:
       - cmake-data
 
 before_script:
-- cd renderer && mkdir .build && cd .build
+- cd renderer && mkdir build && cd build
 - pwd
 - cmake --version
 

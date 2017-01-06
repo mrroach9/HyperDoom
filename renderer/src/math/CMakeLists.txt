@@ -1,0 +1,6 @@
+set(MATH_SOURCE_FILES
+    ${HEADER_FILES}
+    vector3.cpp
+)
+
+ADD_LIBRARY(math ${MATH_SOURCE_FILES})

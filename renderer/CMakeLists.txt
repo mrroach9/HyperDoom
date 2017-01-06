@@ -1,7 +1,17 @@
+# Main CMake file of the core renderer.
+# Usage: cd to HyperDoom/renderer/build, then cmake ..
+# Output binaries and libs will be output to renderer/build.
+
 CMAKE_MINIMUM_REQUIRED (VERSION 3.2)
+
+SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
+SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}") 
+SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 PROJECT (HyperDoom
     LANGUAGES CXX
     VERSION 0.1)
 
-ADD_EXECUTABLE(HyperDoom main.cpp)
+ADD_SUBDIRECTORY(src)
