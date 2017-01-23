@@ -1,6 +1,4 @@
 set(MATH_SOURCE_FILES
-    ${HEADER_FILES}
-    vector3.cpp
+    "${CMAKE_CURRENT_SOURCE_DIR}/vector3.cpp"
+    PARENT_SCOPE
 )
-
-ADD_LIBRARY(math ${MATH_SOURCE_FILES})

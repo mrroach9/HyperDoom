@@ -34,3 +34,4 @@
 # It's recommended to build the project in an out-of-source way, by default under renderer/build
 # and client/build.
 renderer/build/*
+renderer/CMakeFiles/**

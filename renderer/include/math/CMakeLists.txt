@@ -1,3 +1,4 @@
-SET(MATH_HEADER_FILES
-    vector3.h
+set(MATH_HEADER_FILES
+    "${CMAKE_CURRENT_SOURCE_DIR}/vector3.h"
+    PARENT_SCOPE
 )
