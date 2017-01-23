@@ -9,9 +9,7 @@ ExternalProject_Add(
     GIT_TAG master
     # Force separate output paths for debug and release builds to allow easy
     # identification of correct lib in subsequent TARGET_LINK_LIBRARIES commands
-    CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
-               -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
-               -Dgtest_force_shared_crt=ON
+    CMAKE_ARGS -Dgtest_force_shared_crt=ON
                # For now we only build GoogleTest, add GoogleMock when needed.
                -DBUILD_GTEST=ON
                -DBUILD_GMOCK=OFF
@@ -54,9 +52,18 @@ endforeach(file ${TEST_FILES})
 add_executable(${PROJ_TEST_NAME} ${CORELIBS} ${TEST_FILES})
 add_dependencies(${PROJ_TEST_NAME} googletest)
 
-target_link_libraries(${PROJ_TEST_NAME}
-    "${PROJ_NAME}_lib"    
-    debug ${GTEST_BINARY_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}/gtest${LIB_SUFFIX}
-    optimized ${GTEST_BINARY_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}/gtest${LIB_SUFFIX}
-    ${PTHREAD}
-)
+if(MSVC)
+    target_link_libraries(${PROJ_TEST_NAME}
+        "${PROJ_NAME}_lib"    
+        debug ${GTEST_BINARY_DIR}/Debug/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${LIB_SUFFIX}
+        optimized ${GTEST_BINARY_DIR}/Release/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${LIB_SUFFIX}
+        ${PTHREAD}
+    )
+else()
+    target_link_libraries(${PROJ_TEST_NAME}
+        "${PROJ_NAME}_lib"    
+        ${GTEST_BINARY_DIR}/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${LIB_SUFFIX}
+        ${PTHREAD}
+    )
+endif()
+

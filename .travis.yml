@@ -24,7 +24,6 @@ before_script:
 script:
 - cmake ..
 - make
-- find . -name "*.a" -print
 - make test
 
 notifications:
