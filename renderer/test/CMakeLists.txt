@@ -56,7 +56,7 @@ add_dependencies(${PROJ_TEST_NAME} googletest)
 
 target_link_libraries(${PROJ_TEST_NAME}
     "${PROJ_NAME}_lib"    
-    debug ${GTEST_BINARY_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${LIB_SUFFIX}
-    optimized ${GTEST_BINARY_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${LIB_SUFFIX}
+    debug ${GTEST_BINARY_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}/gtest${LIB_SUFFIX}
+    optimized ${GTEST_BINARY_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}/gtest${LIB_SUFFIX}
     ${PTHREAD}
 )
