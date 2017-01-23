@@ -3,10 +3,36 @@
 
 #pragma once
 
-class Vector3 {
-public:
-    double x, y, z;
-	Vector3() : x(0.0), y(0.0), z(0.0) {};
-};
+namespace hd {
+  class Vector3 {
+    public:
+      // Constructors, destructors and initializers.
+      double x, y, z;
+      Vector3() : x(0.0), y(0.0), z(0.0) {}
+      Vector3(double nx, double ny, double nz) : x(nx), y(ny), z(nz) {}
+      Vector3(const Vector3 &v) : x(v.x), y(v.y), z(v.z) {}
+      ~Vector3() {}
 
+      // Returns vector (s, s, s).
+      static Vector3 identity(double s) { return Vector3(s, s, s); }
+      static Vector3 zero() { return identity(0.0); }
+      static Vector3 one() { return identity(1.0); }
+      // Returns standard base vectors (1, 0, 0), (0, 1, 0) and (0, 0, 1).
+      static Vector3 xUnit() { return Vector3(1.0, 0.0, 0.0); }
+      static Vector3 yUnit() { return Vector3(0.0, 1.0, 0.0); }
+      static Vector3 zUnit() { return Vector3(0.0, 0.0, 1.0); }
+    public:
+      // Operators.
+      Vector3& operator+=(const Vector3 &rhs);
+      friend Vector3 operator+(Vector3 lhs, const Vector3 &rhs);
+      Vector3& operator-=(const Vector3 &rhs);
+      friend Vector3 operator-(Vector3 lhs, const Vector3 &rhs);
+      // Multiplication with scalars.
+      Vector3& operator*=(double s);
+      friend Vector3 operator*(Vector3 lhs, double s);
+      friend Vector3 operator*(double s, Vector3 rhs);
+      // Comparison within error bounds.
+      friend bool operator==(const Vector3& lhs, const Vector3& rhs);
+  };
+}
 #endif // _VECTOR3_H_
