@@ -6,8 +6,6 @@
 #include "math/vector3.h"
 
 int main(int argc, char **argv) {
-  std::cout << "Hello World!" << std::endl;
-  hd::Vector3 v = hd::Vector3();
-  std::cout << v.x << " " << v.y << " " << v.z << std::endl;
+  std::cout << "OK!" << std::endl;
   return 0;
 }

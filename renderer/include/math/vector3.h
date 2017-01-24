@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <array>
+
 namespace hd {
   class Vector3 {
     // Constructors, destructors and initializers.
@@ -31,13 +33,35 @@ namespace hd {
       Vector3& operator-=(const Vector3 &rhs);
       friend Vector3 operator-(Vector3 lhs, const Vector3 &rhs);
 
-      // Multiplication with scalars.
+      // Multiplication and division with scalars.
       Vector3& operator*=(double s);
       friend Vector3 operator*(Vector3 lhs, double s);
       friend Vector3 operator*(double s, Vector3 rhs);
 
+      // Note: passing in 0 or almost zero values will cause assertion error.
+      Vector3& operator/=(double s);
+      friend Vector3 operator/(Vector3 lhs, double s);
+
       // Comparison within error bounds.
       friend bool operator==(const Vector3& lhs, const Vector3& rhs);
+
+      // Get component with index. 0 - x, 1 - y, 2 - z.
+      // Passing in index other than 0, 1, 2 will cause assertion error.
+      double operator[](int index);
+      std::array<double, 3> toArray();
+      void set(int index, double value);
+
+      // Inner product, cross product and their derivitives.
+      friend double operator*(const Vector3& lhs, const Vector3& rhs);
+      double len();
+      double len2();
+      // Return normalized vector from this one.
+      Vector3 normalize();
+      // Normalize this vector and return its length.
+      double normalizeSelf();
+      // Cross product
+      friend Vector3 operator^(const Vector3& lhs, const Vector3& rhs);
+      // TODO: outer product equivalent matrix.
   };
 }
 #endif // _VECTOR3_H_
