@@ -76,7 +76,7 @@ namespace hd {
     return lhs;
   }
 
-  Vector3& Matrix3::operator[](int rowInd) const {
+  Vector3 Matrix3::operator[](int rowInd) const {
     // TODO: impl.
     return Vector3();
   }
