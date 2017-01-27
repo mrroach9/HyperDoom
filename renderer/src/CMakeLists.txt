@@ -4,7 +4,7 @@ add_subdirectory(math)
 
 set(SOURCE_FILES
     ${MATH_SOURCE_FILES}
-    main.cpp
+    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
 
 set(PROJ_LIB_NAME "${PROJ_NAME}_lib")

@@ -16,7 +16,7 @@ namespace hd {
       ~Vector3() {}
 
       // Returns vector (s, s, s).
-      static Vector3 identity(double s) { return Vector3(s, s, s); }
+      static Vector3 identity(double s = 1.0) { return Vector3(s, s, s); }
       static Vector3 zero() { return identity(0.0); }
       static Vector3 one() { return identity(1.0); }
 
@@ -25,7 +25,7 @@ namespace hd {
       static Vector3 yUnit() { return Vector3(0.0, 1.0, 0.0); }
       static Vector3 zUnit() { return Vector3(0.0, 0.0, 1.0); }
 
-    // Operators.
+    // Basic operators.
     public:
       Vector3& operator+=(const Vector3 &rhs);
       friend Vector3 operator+(Vector3 lhs, const Vector3 &rhs);
@@ -47,21 +47,22 @@ namespace hd {
 
       // Get component with index. 0 - x, 1 - y, 2 - z.
       // Passing in index other than 0, 1, 2 will cause assertion error.
-      double operator[](int index);
-      std::array<double, 3> toArray();
+      double operator[](int index) const;
+      std::array<double, 3> toArray() const;
       void set(int index, double value);
 
+    // Vector specific operations.
+    public:
       // Inner product, cross product and their derivitives.
       friend double operator*(const Vector3& lhs, const Vector3& rhs);
-      double len();
-      double len2();
+      double len() const;
+      double len2() const;
       // Return normalized vector from this one.
-      Vector3 normalize();
+      Vector3 normalize() const;
       // Normalize this vector and return its length.
       double normalizeSelf();
       // Cross product
       friend Vector3 operator^(const Vector3& lhs, const Vector3& rhs);
-      // TODO: outer product equivalent matrix.
   };
 }
 #endif // _VECTOR3_H_

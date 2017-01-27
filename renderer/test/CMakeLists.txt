@@ -39,7 +39,7 @@ include_directories(
 add_subdirectory(math)
 set(TEST_FILES
     ${MATH_TEST_FILES}
-    test_main.cpp
+    "${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp"
 )
 set(PROJ_TEST_NAME "${PROJ_NAME}_test")
 

@@ -61,12 +61,12 @@ namespace hd {
     return lhs;
   }
 
-  double Vector3::operator[](int index) {
+  double Vector3::operator[](int index) const {
     assert(index >= 0 && index <= 2);
     return index == 0 ? x : (index == 1 ? y : z);
   }
 
-  std::array<double, 3> Vector3::toArray() {
+  std::array<double, 3> Vector3::toArray() const {
     std::array<double, 3> a = {x, y, z};
     return a;
   }
@@ -86,15 +86,15 @@ namespace hd {
     return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
   }
 
-  double Vector3::len() {
+  double Vector3::len() const {
     return sqrt(len2());
   }
 
-  double Vector3::len2() {
+  double Vector3::len2() const {
     return (*this) * (*this);
   }
 
-  Vector3 Vector3::normalize() {
+  Vector3 Vector3::normalize() const {
     Vector3 v = Vector3(*this);
     v.normalizeSelf();
     return v;

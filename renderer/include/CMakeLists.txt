@@ -1,5 +1,5 @@
 set(HEADER_FILES
     ${MATH_HEADER_FILES}
-    "const.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/const.h"
     PARENT_SCOPE
 )

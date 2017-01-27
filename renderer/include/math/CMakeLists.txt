@@ -1,4 +1,5 @@
 set(MATH_HEADER_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/vector3.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/matrix3.h"
     PARENT_SCOPE
 )
