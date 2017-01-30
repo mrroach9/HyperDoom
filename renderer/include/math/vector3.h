@@ -12,6 +12,7 @@ namespace hd {
       double x, y, z;
       Vector3() : x(0.0), y(0.0), z(0.0) {}
       Vector3(double nx, double ny, double nz) : x(nx), y(ny), z(nz) {}
+      Vector3(std::array<double, 3> v): x(v[0]), y(v[1]), z(v[2]) {}
       Vector3(const Vector3 &v) : x(v.x), y(v.y), z(v.z) {}
       ~Vector3() {}
 

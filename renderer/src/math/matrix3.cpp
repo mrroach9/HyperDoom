@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <array>
+#include <cassert>
 #include <cmath>
 #include "const.h"
 #include "math/vector3.h"
@@ -18,12 +20,18 @@ namespace hd {
   }
 
   Matrix3 Matrix3::crossProdMatOf(const Vector3& v) {
-    // TODO: impl.
-    return Matrix3();
+    return Matrix3(
+        std::array<double, 3> {0, -v.z, v.y},
+        std::array<double, 3> {v.z, 0, -v.x},
+        std::array<double, 3> {-v.y, v.x, 0});
   }
 
   Matrix3& Matrix3::operator+=(const Matrix3& rhs) {
-    // TODO: impl.
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        this->mat[i][j] += rhs[i][j];
+      }
+    }
     return *this;
   }
 
@@ -33,7 +41,11 @@ namespace hd {
   }
 
   Matrix3& Matrix3::operator-=(const Matrix3& rhs) {
-    // TODO: impl.
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        this->mat[i][j] -= rhs[i][j];
+      }
+    }
     return *this;
   }
 
@@ -43,17 +55,28 @@ namespace hd {
   }
 
   Matrix3& Matrix3::operator*=(const Matrix3& rhs) {
-    // TODO: impl.
-    return *this;
+    this->mat = ((*this) * rhs).mat;
+    return (*this);
   }
 
-  Matrix3 operator*(Matrix3 lhs, const Matrix3& rhs) {
-    lhs *= rhs;
-    return lhs;
+  Matrix3 operator*(const Matrix3& lhs, const Matrix3& rhs) {
+    Matrix3 res = Matrix3::zero();
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        for (int k = 0; k < 3; ++k) {
+          res.mat[i][j] += lhs.mat[i][k] * rhs.mat[k][j];
+        }
+      }
+    }
+    return res;
   }
 
   Matrix3& Matrix3::operator*=(double rhs) {
-    // TODO: impl.
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        this->mat[i][j] *= rhs;
+      }
+    }
     return *this;
   }
 
@@ -67,8 +90,8 @@ namespace hd {
   }
 
   Matrix3& Matrix3::operator/=(double rhs) {
-    // TODO: impl.
-    return *this;
+    assert(fabs(rhs) > HD_EPSILON_TINY);
+    return (*this) *= 1.0 / rhs;
   }
 
   Matrix3 operator/(Matrix3 lhs, double rhs) {
@@ -77,20 +100,29 @@ namespace hd {
   }
 
   Vector3 Matrix3::operator[](int rowInd) const {
-    // TODO: impl.
-    return Vector3();
+    assert(rowInd >= 0 && rowInd <= 2);
+    return Vector3(mat[rowInd]);
   }
 
   void Matrix3::set(int rowInd, Vector3& row) {
-    // TODO: impl.
+    assert(rowInd >= 0 && rowInd <= 2);
+    mat[rowInd] = row.toArray();
   }
 
   void Matrix3::set(int rowInd, int colInd, double val) {
-    // TODO: impl.
+    assert(rowInd >= 0 && rowInd <= 2);
+    assert(colInd >= 0 && colInd <= 2);
+    mat[rowInd][colInd] = val;
   }
 
   bool operator==(const Matrix3& lhs, const Matrix3& rhs) {
-    // TODO: impl.
+    for (int i = 0; i < 3; ++i) {
+      for (int j = 0; j < 3; ++j) {
+        if (fabs(lhs.mat[i][j] - rhs.mat[i][j]) > HD_EPSILON) {
+          return false;
+        }
+      }
+    }
     return true;
   }
 
@@ -101,11 +133,17 @@ namespace hd {
   }
 
   void Matrix3::transposeSelf() {
-    // TODO: impl.
+    std::swap(mat[0][1], mat[1][0]);
+    std::swap(mat[0][2], mat[2][0]);
+    std::swap(mat[1][2], mat[2][1]);
   }
 
   double Matrix3::det() const {
-    // TODO: impl.
-    return 0;
+    return mat[0][0] * mat[1][1] * mat[2][2]
+        +  mat[0][1] * mat[1][2] * mat[2][0]
+        +  mat[0][2] * mat[1][0] * mat[2][1]
+        -  mat[2][0] * mat[1][1] * mat[0][2]
+        -  mat[1][2] * mat[2][1] * mat[0][0]
+        -  mat[0][1] * mat[1][0] * mat[2][2];
   }
 }

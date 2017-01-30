@@ -24,6 +24,7 @@ namespace hd {
       static Matrix3 zero() { return diag(0.0); }
       static Matrix3 identity() { return diag(1.0); }
       // Create cross-product-equivalent matrix from a given vector.
+      // E.g. axb = M_a * b, calling this method with param a returns M_a.
       static Matrix3 crossProdMatOf(const Vector3& v);
     
     // Basic operations.
@@ -36,7 +37,7 @@ namespace hd {
 
       // Multiplication with matrices.
       Matrix3& operator*=(const Matrix3& rhs);
-      friend Matrix3 operator*(Matrix3 lhs, const Matrix3& rhs);
+      friend Matrix3 operator*(const Matrix3& lhs, const Matrix3& rhs);
       
       // Multiplication and division with numericals.
       Matrix3& operator*=(double rhs);
