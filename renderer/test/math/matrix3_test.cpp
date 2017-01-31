@@ -62,7 +62,8 @@ TEST_F(Matrix3Test, TestBasicOperators) {
 TEST_F(Matrix3Test, TestGettersAndSettersViaIndices) {
   EXPECT_EQ(m1[0][0], 1.0);
   EXPECT_EQ(m1[2][1], 8.0);
-  m1.set(2, hd::Vector3(-1.0, -2.0, -3.0));
+  hd::Vector3 v = hd::Vector3(-1.0, -2.0, -3.0);
+  m1.set(2, v);
   EXPECT_EQ(m1[2][0], -1.0);
   EXPECT_EQ(m1[2][1], -2.0);
   m1.set(1, 0, -100.0);
