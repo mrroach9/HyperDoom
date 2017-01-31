@@ -71,6 +71,16 @@ namespace hd {
     return res;
   }
 
+  Vector3 operator*(const Matrix3& lhs, const Vector3& rhs) {
+    Vector3 res = Vector3::zero();
+    for (int i = 0; i < 3; ++i) {
+      res.x += lhs.mat[0][i] * rhs[i];
+      res.y += lhs.mat[1][i] * rhs[i];
+      res.z += lhs.mat[2][i] * rhs[i];
+    }
+    return res;
+  }
+
   Matrix3& Matrix3::operator*=(double rhs) {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {

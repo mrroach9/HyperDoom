@@ -38,6 +38,7 @@ namespace hd {
       // Multiplication with matrices.
       Matrix3& operator*=(const Matrix3& rhs);
       friend Matrix3 operator*(const Matrix3& lhs, const Matrix3& rhs);
+      friend Vector3 operator*(const Matrix3& lhs, const Vector3& rhs);
       
       // Multiplication and division with numericals.
       Matrix3& operator*=(double rhs);
