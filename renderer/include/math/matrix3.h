@@ -13,7 +13,7 @@ namespace hd {
   
     // Constructors, destructors and initiators.
     public:
-      Matrix3() {}
+      Matrix3();
       Matrix3(std::array<double, 3> row1, std::array<double, 3> row2, std::array<double, 3> row3);
       Matrix3(const Vector3& row1, const Vector3& row2, const Vector3& row3)
           : Matrix3(row1.toArray(), row2.toArray(), row3.toArray()) {}

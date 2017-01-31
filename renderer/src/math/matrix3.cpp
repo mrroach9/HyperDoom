@@ -7,6 +7,12 @@
 #include "math/matrix3.h"
 
 namespace hd {
+  Matrix3::Matrix3() {
+    mat[0] = std::array<double, 3> {0.0, 0.0, 0.0};
+    mat[1] = std::array<double, 3> {0.0, 0.0, 0.0};
+    mat[2] = std::array<double, 3> {0.0, 0.0, 0.0};
+  }
+
   Matrix3::Matrix3(std::array<double, 3> row1,
       std::array<double, 3> row2,
       std::array<double, 3> row3) {
