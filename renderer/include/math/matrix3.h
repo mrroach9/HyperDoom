@@ -7,6 +7,9 @@
 #include "math/vector3.h"
 
 namespace hd {
+  /**
+   * 3x3 double-precision Matrix definition and its operations.
+   */
   class Matrix3 {
     private:
       std::array<std::array<double, 3>, 3> mat;

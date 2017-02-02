@@ -6,6 +6,9 @@
 #include <array>
 
 namespace hd {
+  /**
+   * 3-dimentional double-precision vector definition and it's operations.
+   */
   class Vector3 {
     // Constructors, destructors and initializers.
     public:
