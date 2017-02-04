@@ -1,9 +1,11 @@
 include_directories(../include)
 
 add_subdirectory(math)
+add_subdirectory(geometry)
 
 set(SOURCE_FILES
     ${MATH_SOURCE_FILES}
+    ${GEOMETRY_SOURCE_FILES}
     "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
 )
 

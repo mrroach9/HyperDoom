@@ -10,7 +10,7 @@ namespace hd {
   class HasVolume {
     public:
       virtual double volume() const = 0;
-      virtual ~HasVolume() = 0;
+      virtual ~HasVolume() = 0 {}
   };
 }
 

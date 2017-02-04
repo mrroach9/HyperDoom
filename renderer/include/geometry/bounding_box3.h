@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include <cmath>
 #include "math/vector3.h"
+#include "geometry/has_surface_area.h"
+#include "geometry/has_volume.h"
 
 namespace hd {
   /**
@@ -20,17 +21,15 @@ namespace hd {
 
     public:
       BoundingBox3() : minCorner(0.0, 0.0, 0.0), maxCorner(0.0, 0.0, 0.0) {}
-      BoundingBox3(const Vector3& minVec, const Vector3& maxVec)
-          : minCorner(minVec), maxCorner(maxVec) {}
-      BoundingBox3(double minX, double maxX, double minY, double maxY, double minZ, double maxZ)
-          : minCorner(minX, minY, minZ), maxCorner(maxX, maxY, maxZ) {}
+      BoundingBox3(const Vector3& minVec, const Vector3& maxVec);
+      BoundingBox3(double minX, double maxX, double minY, double maxY, double minZ, double maxZ);
       BoundingBox3(const BoundingBox3& box)
-          : minCorder(box.minCorder), maxCorner(box.maxCorner) {}
+          : minCorner(box.minCorner), maxCorner(box.maxCorner) {}
       ~BoundingBox3() {}
 
     public:
-      Vector3 minCorner() const { return Vector3(minCorner); }
-      Vector3 maxCorner() const { return Vector3(maxCorner); }
+      Vector3 getMinCorner() const { return Vector3(minCorner); }
+      Vector3 getMaxCorner() const { return Vector3(maxCorner); }
       Vector3 length() const { return maxCorner - minCorner; }
       double minX() const { return minCorner.x; }
       double minY() const { return minCorner.y; }
@@ -41,14 +40,16 @@ namespace hd {
       double lenX() const { return maxCorner.x - minCorner.x; }
       double lenY() const { return maxCorner.y - minCorner.y; }
       double lenZ() const { return maxCorner.z - minCorner.z; }
-      double volume() const override {
-        Vector3 len = length();
-        return fabs(len.x * len.y * len.z);
-      }
-      double surfaceArea() const override {
-        Vector3 len = length();
-        return 2.0 * fabs(len.x * len.y + len.x * len.z + len.y * len.z);
-      }
+    
+    public:
+      // Compare bounding boxes within error bounds.
+      friend bool operator==(const BoundingBox3& lhs, const BoundingBox3& rhs);
+      double volume() const override;
+      double surfaceArea() const override;
+      // Returns a new bounding box by moving this one by the given vector.
+      BoundingBox3 move(const Vector3& v) const;
+      // Move this bounding box by a given vector.
+      void moveSelf(const Vector3& v);
   };
 }
 
