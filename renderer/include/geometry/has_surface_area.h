@@ -10,7 +10,7 @@ namespace hd {
   class HasSurfaceArea {
     public:
       virtual double surfaceArea() const = 0;
-      virtual ~HasSurfaceArea() = 0 {}
+      virtual ~HasSurfaceArea() {}
   };
 }
 
