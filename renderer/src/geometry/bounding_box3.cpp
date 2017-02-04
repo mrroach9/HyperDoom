@@ -22,15 +22,17 @@ namespace hd {
   }
 
   double BoundingBox3::volume() const {
-    Vector3 len = length();
-    double volume = len.x * len.y * len.z;
+    Vector3 boxSize = size();
+    double volume = boxSize.x * boxSize.y * boxSize.z;
     assert(volume >= 0);
     return volume;
   }
 
   double BoundingBox3::surfaceArea() const {
-    Vector3 len = length();
-    double area = 2.0 * (len.x * len.y + len.x * len.z + len.y * len.z);
+    Vector3 boxSize = size();
+    double area = 2.0 * (boxSize.x * boxSize.y
+        + boxSize.x * boxSize.z
+        + boxSize.y * boxSize.z);
     assert(area >= 0);
     return area;
   }

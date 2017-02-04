@@ -36,9 +36,13 @@ include_directories(
     ../include
     ${GTEST_INCLUDE_DIR}
 )
+
 add_subdirectory(math)
+add_subdirectory(geometry)
+
 set(TEST_FILES
     ${MATH_TEST_FILES}
+    ${GEOMETRY_TEST_FILES}
     "${CMAKE_CURRENT_SOURCE_DIR}/test_main.cpp"
 )
 set(PROJ_TEST_NAME "${PROJ_NAME}_test")

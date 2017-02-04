@@ -19,6 +19,7 @@ namespace hd {
       Vector3 minCorner;
       Vector3 maxCorner;
 
+    // Initializers and deconstructors.
     public:
       BoundingBox3() : minCorner(0.0, 0.0, 0.0), maxCorner(0.0, 0.0, 0.0) {}
       BoundingBox3(const Vector3& minVec, const Vector3& maxVec);
@@ -27,10 +28,10 @@ namespace hd {
           : minCorner(box.minCorner), maxCorner(box.maxCorner) {}
       ~BoundingBox3() {}
 
+    // Getters and setters.
     public:
       Vector3 getMinCorner() const { return Vector3(minCorner); }
       Vector3 getMaxCorner() const { return Vector3(maxCorner); }
-      Vector3 length() const { return maxCorner - minCorner; }
       double minX() const { return minCorner.x; }
       double minY() const { return minCorner.y; }
       double minZ() const { return minCorner.z; }
@@ -40,10 +41,12 @@ namespace hd {
       double lenX() const { return maxCorner.x - minCorner.x; }
       double lenY() const { return maxCorner.y - minCorner.y; }
       double lenZ() const { return maxCorner.z - minCorner.z; }
-    
+  
+    // Basic properties and operations.
     public:
       // Compare bounding boxes within error bounds.
       friend bool operator==(const BoundingBox3& lhs, const BoundingBox3& rhs);
+      Vector3 size() const { return maxCorner - minCorner; }      
       double volume() const override;
       double surfaceArea() const override;
       // Returns a new bounding box by moving this one by the given vector.
