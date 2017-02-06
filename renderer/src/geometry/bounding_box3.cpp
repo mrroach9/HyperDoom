@@ -6,19 +6,19 @@ namespace hd {
     assert(minVec.x <= maxVec.x
         && minVec.y <= maxVec.y
         && minVec.z <= maxVec.z);
-    minCorner = minVec;
-    maxCorner = maxVec;
+    _minCorner = minVec;
+    _maxCorner = maxVec;
   }
 
   BoundingBox3::BoundingBox3(double minX, double maxX, double minY, double maxY,
       double minZ, double maxZ) {
     assert(minX <= maxX && minY <= maxY && minZ <= maxZ);
-    minCorner = Vector3(minX, minY, minZ);
-    maxCorner = Vector3(maxX, maxY, maxZ);
+    _minCorner = Vector3(minX, minY, minZ);
+    _maxCorner = Vector3(maxX, maxY, maxZ);
   }
 
   bool operator==(const BoundingBox3& lhs, const BoundingBox3& rhs) {
-    return lhs.minCorner == rhs.minCorner && lhs.maxCorner == rhs.maxCorner;
+    return lhs._minCorner == rhs._minCorner && lhs._maxCorner == rhs._maxCorner;
   }
 
   double BoundingBox3::volume() const {
@@ -44,7 +44,7 @@ namespace hd {
   }
 
   void BoundingBox3::moveSelf(const Vector3& v) {
-    minCorner += v;
-    maxCorner += v;
+    _minCorner += v;
+    _maxCorner += v;
   }
 }

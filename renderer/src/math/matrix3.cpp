@@ -8,17 +8,17 @@
 
 namespace hd {
   Matrix3::Matrix3() {
-    mat[0] = std::array<double, 3> {0.0, 0.0, 0.0};
-    mat[1] = std::array<double, 3> {0.0, 0.0, 0.0};
-    mat[2] = std::array<double, 3> {0.0, 0.0, 0.0};
+    _mat[0] = std::array<double, 3> {0.0, 0.0, 0.0};
+    _mat[1] = std::array<double, 3> {0.0, 0.0, 0.0};
+    _mat[2] = std::array<double, 3> {0.0, 0.0, 0.0};
   }
 
   Matrix3::Matrix3(std::array<double, 3> row1,
       std::array<double, 3> row2,
       std::array<double, 3> row3) {
-    mat[0] = row1;
-    mat[1] = row2;
-    mat[2] = row3;
+    _mat[0] = row1;
+    _mat[1] = row2;
+    _mat[2] = row3;
   }
 
   Matrix3 Matrix3::diag(double s) {
@@ -35,7 +35,7 @@ namespace hd {
   Matrix3& Matrix3::operator+=(const Matrix3& rhs) {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        this->mat[i][j] += rhs[i][j];
+        _mat[i][j] += rhs[i][j];
       }
     }
     return *this;
@@ -49,7 +49,7 @@ namespace hd {
   Matrix3& Matrix3::operator-=(const Matrix3& rhs) {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        this->mat[i][j] -= rhs[i][j];
+        _mat[i][j] -= rhs[i][j];
       }
     }
     return *this;
@@ -61,7 +61,7 @@ namespace hd {
   }
 
   Matrix3& Matrix3::operator*=(const Matrix3& rhs) {
-    this->mat = ((*this) * rhs).mat;
+    _mat = ((*this) * rhs)._mat;
     return (*this);
   }
 
@@ -70,7 +70,7 @@ namespace hd {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
         for (int k = 0; k < 3; ++k) {
-          res.mat[i][j] += lhs.mat[i][k] * rhs.mat[k][j];
+          res._mat[i][j] += lhs._mat[i][k] * rhs._mat[k][j];
         }
       }
     }
@@ -80,9 +80,9 @@ namespace hd {
   Vector3 operator*(const Matrix3& lhs, const Vector3& rhs) {
     Vector3 res = Vector3::zero();
     for (int i = 0; i < 3; ++i) {
-      res.x += lhs.mat[0][i] * rhs[i];
-      res.y += lhs.mat[1][i] * rhs[i];
-      res.z += lhs.mat[2][i] * rhs[i];
+      res.x += lhs._mat[0][i] * rhs[i];
+      res.y += lhs._mat[1][i] * rhs[i];
+      res.z += lhs._mat[2][i] * rhs[i];
     }
     return res;
   }
@@ -90,7 +90,7 @@ namespace hd {
   Matrix3& Matrix3::operator*=(double rhs) {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        this->mat[i][j] *= rhs;
+        _mat[i][j] *= rhs;
       }
     }
     return *this;
@@ -117,24 +117,24 @@ namespace hd {
 
   Vector3 Matrix3::operator[](int rowInd) const {
     assert(rowInd >= 0 && rowInd <= 2);
-    return Vector3(mat[rowInd]);
+    return Vector3(_mat[rowInd]);
   }
 
   void Matrix3::set(int rowInd, Vector3& row) {
     assert(rowInd >= 0 && rowInd <= 2);
-    mat[rowInd] = row.toArray();
+    _mat[rowInd] = row.toArray();
   }
 
   void Matrix3::set(int rowInd, int colInd, double val) {
     assert(rowInd >= 0 && rowInd <= 2);
     assert(colInd >= 0 && colInd <= 2);
-    mat[rowInd][colInd] = val;
+    _mat[rowInd][colInd] = val;
   }
 
   bool operator==(const Matrix3& lhs, const Matrix3& rhs) {
     for (int i = 0; i < 3; ++i) {
       for (int j = 0; j < 3; ++j) {
-        if (fabs(lhs.mat[i][j] - rhs.mat[i][j]) > HD_EPSILON) {
+        if (fabs(lhs._mat[i][j] - rhs._mat[i][j]) > HD_EPSILON) {
           return false;
         }
       }
@@ -149,17 +149,17 @@ namespace hd {
   }
 
   void Matrix3::transposeSelf() {
-    std::swap(mat[0][1], mat[1][0]);
-    std::swap(mat[0][2], mat[2][0]);
-    std::swap(mat[1][2], mat[2][1]);
+    std::swap(_mat[0][1], _mat[1][0]);
+    std::swap(_mat[0][2], _mat[2][0]);
+    std::swap(_mat[1][2], _mat[2][1]);
   }
 
   double Matrix3::det() const {
-    return mat[0][0] * mat[1][1] * mat[2][2]
-        +  mat[0][1] * mat[1][2] * mat[2][0]
-        +  mat[0][2] * mat[1][0] * mat[2][1]
-        -  mat[2][0] * mat[1][1] * mat[0][2]
-        -  mat[1][2] * mat[2][1] * mat[0][0]
-        -  mat[0][1] * mat[1][0] * mat[2][2];
+    return _mat[0][0] * _mat[1][1] * _mat[2][2]
+        +  _mat[0][1] * _mat[1][2] * _mat[2][0]
+        +  _mat[0][2] * _mat[1][0] * _mat[2][1]
+        -  _mat[2][0] * _mat[1][1] * _mat[0][2]
+        -  _mat[1][2] * _mat[2][1] * _mat[0][0]
+        -  _mat[0][1] * _mat[1][0] * _mat[2][2];
   }
 }

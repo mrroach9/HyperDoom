@@ -12,7 +12,7 @@ namespace hd {
    */
   class Matrix3 {
     private:
-      std::array<std::array<double, 3>, 3> mat;
+      std::array<std::array<double, 3>, 3> _mat;
   
     // Constructors, destructors and initiators.
     public:

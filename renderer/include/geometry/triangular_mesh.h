@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <memory>
 #include <vector>
 #include "math/vector3.h"
 #include "geometry/bounding_box3.h"
@@ -26,13 +27,15 @@ namespace hd {
    * For more details please read:
    *   Computational Geometry: Algorithms and Applications (second edition), Chapter 2.2
    *   M. de Berg, M. van Kreveld, M. Overmars, O. Schwarzkopf.
+   *
+   * DCELs require population and calculation of derived data upon creation. The constructors
+   * are private and therefore, you must and you can only build a triangular mesh via
+   * TriangularMesh::Builder (except for copy constructor).
    */
 
   // TODO: add constructors and property methods for Vertex/Edge/Face.
   // TODO: add ser/des solutions.
-  // TODO: implement all methods.
   // TODO: add Triangle3 class and getTriangle() method.
-  // TODO: add normal interpolation enums, getters and normal getters.
   class TriangularMesh : public HasBoundingBox3 {
     /**
      * Definitions of vertices of DCEL.
@@ -79,22 +82,59 @@ namespace hd {
         std::array<unsigned int, 3> edges;
         Vector3 normal;
     };
-    
+
+    /**
+     * Definition of different modes of normal vector calculation on vertices.
+     */
+    enum class VertexNormalMode {
+      // User specifies normal vector for each vertex.
+      USER_SPECIFIED,
+      // Normal of a vertex is calculated by averaging normals of all its adjacent faces.
+      // If face normals are provided by users, we use the provided value. Otherwise
+      // We use the flat normal (the unit normal vector orthoganal to the face).
+      AVERAGED
+    };
+
+    /**
+     * Definition of different modes of normal vector calculation on faces.
+     */
+    enum class FaceNormalMode {
+      // User specifies normal vector for each face.
+      USER_SPECIFIED,
+      // Use the unit normal vector orthoganal to the face.
+      FLAT,
+      // Linearly interpolate normal vector from normals of all its vertices.
+      // More specifically, if a point p on a triangle can be represented as
+      //    p = a * v1 + b * v2 + c * v3,
+      // where vi's are the coordinates of the three vertices of the face and a, b, c are
+      // positive real numbers satisfying a + b + c = 1, then the normal of p, denoted as
+      // N(p), is calculated as N(p) = a * N(v1) + b * N(v2) + c * N(v3).
+      //
+      // Note: if vertex mode is not USER_SPECIFIED, then we first need to calculate vertex
+      // normal by averaging flat normals of faces, then use the averaged vertex normal
+      // to do Phong interpolation.
+      PHONG
+    };
+
     private:
-      std::vector<Vertex> vertices;
-      std::vector<Edge> edges;
-      std::vector<Face> faces;
-      BoundingBox3 boundingBox;
+      std::vector<Vertex> _vertices;
+      std::vector<Edge> _edges;
+      std::vector<Face> _faces;
+      BoundingBox3 _boundingBox;
+      bool _isPopulated;
+      VertexNormalMode _vertexNormalMode;
+      FaceNormalMode _faceNormalMode;
     
     public:
-      TriangularMesh();
-      TriangularMesh(std::vector<std::array<double, 3>> points,
-          std::vector<std::array<unsigned int, 3>> faces);
-      TriangularMesh(std::vector<Vector3> points,
-          std::vector<std::array<unsigned int, 3>> faces);
       TriangularMesh(const TriangularMesh& mesh);
       ~TriangularMesh();
-  
+      class Builder;
+      static Builder newBuilder(
+          VertexNormalMode vertexNormalMode,
+          FaceNormalMode faceNormalMode);
+    private:
+      TriangularMesh();
+
     public:
       // Get vertex/face/edge at given index. We intentioanlly made these method names
       // super short because they're heavily used in long chaining calls.
@@ -103,18 +143,49 @@ namespace hd {
       Edge e(unsigned int Edge) const;
 
       // Get number of vertices/edges/faces.
-      unsigned int getVertexNum() const;
-      unsigned int getEdgeNum() const;
-      unsigned int getFaceNum() const;
+      unsigned int vertexNum() const;
+      unsigned int edgeNum() const;
+      unsigned int faceNum() const;
 
       // More properties and operations.
       BoundingBox3 boundingBox3() const;
+
+      VertexNormalMode vertexNormalMode() const;
+      FaceNormalMode faceNormalMode() const;
   
     public:
       // Construct all data from row input (usually only vertex coordinates and faces).
       // This includes construction of edge list and refereces in face/vertex structure,
       // pre-calculation and interpolation of normals.
       void populate();
+      bool isPopulated() const;
+    
+    class Builder {
+      private:
+        std::unique_ptr<TriangularMesh> _instance;
+
+      public:
+        Builder(VertexNormalMode vertexNormalNode, FaceNormalMode faceNormalMode);
+
+        // Add a vertex. For this method and the method below, the order of vertex insertion
+        // determined vertex index (or ID). Please make sure you're inserting vertices as the
+        // same order they appear in face list.
+        Builder& addVertex(const Vector3& v);
+        // Add vertex with normal. This method is only allowed when vertexNormalMode
+        // is USER_SPECIFIED.
+        Builder& addVertex(const Vector3& v, const Vector3& vn);
+        // Add a triangular face with its three vertices' indices. The indices of vertices are
+        // determined by the order you inserted them. The order of the three vertices of the
+        // face is considered counter-clockwise, that is. if the list is {v1, v2, v3}, then
+        // the right-hand rule applying from v1 to v2 to v3, determines the normal direction
+        // of the face, or, the outside of the face.
+        Builder& addFace(const std::array<unsigned int, 3>& face);
+        // Add a face with normal. This method is only allowed when
+        // faceNormalMode is USER_SPECIFIED.
+        Builder& addFace(const std::array<unsigned int, 3>& face, const Vector3& fn);
+      public:
+        TriangularMesh* build(bool populate);
+    };
   };
 }
 

@@ -7,8 +7,8 @@ TEST(BoundingBox3Test, TestInitWorks) {
   hd::BoundingBox3 b2 = hd::BoundingBox3(
       0.0, 10.0, 1.0, 21.0, 2.0, 32.0);
   EXPECT_TRUE(b1 == b2);
-  EXPECT_TRUE(b2.getMinCorner() == hd::Vector3(0.0, 1.0, 2.0));
-  EXPECT_TRUE(b2.getMaxCorner() == hd::Vector3(10.0, 21.0, 32.0));
+  EXPECT_TRUE(b2.minCorner() == hd::Vector3(0.0, 1.0, 2.0));
+  EXPECT_TRUE(b2.maxCorner() == hd::Vector3(10.0, 21.0, 32.0));
 }
 
 TEST(BoundingBox3Test, TestBasicProperties) {

@@ -10,9 +10,11 @@ namespace hd {
    * 3-dimentional double-precision vector definition and it's operations.
    */
   class Vector3 {
-    // Constructors, destructors and initializers.
     public:
       double x, y, z;
+
+    // Constructors, destructors and initializers.
+    public:
       Vector3() : x(0.0), y(0.0), z(0.0) {}
       Vector3(double nx, double ny, double nz) : x(nx), y(ny), z(nz) {}
       Vector3(std::array<double, 3> v): x(v[0]), y(v[1]), z(v[2]) {}
