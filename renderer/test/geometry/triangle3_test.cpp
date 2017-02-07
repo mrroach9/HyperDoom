@@ -38,7 +38,7 @@ TEST_F(Triangle3Test, TestInitAndGetters) {
 
   EXPECT_EQ(tri1.v(2), hd::Vector3(0.0, 2.0, 0.0));
   EXPECT_EQ(tri1.e(1), hd::Vector3(-1.0, 2.0, 0.0));
-  EXPECT_EQ(tri2.e(2), hd::Vector3(0.0, -1.0, 1.0));
+  EXPECT_EQ(tri2.e(2), hd::Vector3(1.0, 0.0, -1.0));
 }
 
 TEST_F(Triangle3Test, TestProperties) {
