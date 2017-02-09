@@ -1,4 +1,5 @@
 #include "geometry/triangular_mesh.h"
+#include <cassert>
 
 namespace hd {
   TriangularMesh::TriangularMesh() {
@@ -10,7 +11,9 @@ namespace hd {
   }
 
   TriangularMesh::~TriangularMesh() {
-    // TODO: Implement this.
+    _vertices.clear();
+    _edges.clear();
+    _faces.clear();
   }
 
   TriangularMesh::Builder TriangularMesh::newBuilder(
@@ -20,38 +23,46 @@ namespace hd {
   }
 
   TriangularMesh::Vertex TriangularMesh::v(unsigned int index) const {
-    // TODO: Implement this.
-    return TriangularMesh::Vertex();
+    assert(index <  vertexNum());
+    return _vertices[index];
   }
 
   TriangularMesh::Face TriangularMesh::f(unsigned int index) const {
-    // TODO: Implement this.
-    return TriangularMesh::Face();
+    assert(index < faceNum());
+    return _faces[index];
   }
 
-  TriangularMesh::Edge TriangularMesh::e(unsigned int Edge) const {
-    // TODO: Implement this.
-    return TriangularMesh::Edge();
+  TriangularMesh::Edge TriangularMesh::e(unsigned int index) const {
+    assert(index < edgeNum());
+    return _edges[index];
   }
 
   unsigned int TriangularMesh::vertexNum() const {
-    // TODO: Implement this.
-    return 0;
+    return _vertices.size();
   }
 
   unsigned int TriangularMesh::edgeNum() const {
-    // TODO: Implement this.
-    return 0;
+    return _edges.size();
   }
 
   unsigned int TriangularMesh::faceNum() const {
-    // TODO: Implement this.
-    return 0;
+    return _faces.size();
   }
 
-  BoundingBox3 TriangularMesh::boundingBox3() const {
+  Triangle3 TriangularMesh::triangle(unsigned int index) const {
     // TODO: Implement this.
-    return BoundingBox3();
+    return Triangle3();
+  }
+
+  Vector3 TriangularMesh::normal(const TriangularMesh::MeshPoint& p) const {
+    // TODO: Implement this.
+    return Vector3();
+  }
+
+
+  BoundingBox3 TriangularMesh::boundingBox3() const {
+    assert(isPopulated());
+    return _boundingBox;    
   }
 
   void TriangularMesh::populate() {
@@ -71,9 +82,11 @@ namespace hd {
   }
 
   TriangularMesh::Builder::Builder(
-      TriangularMesh::VertexNormalMode vertexNormalNode,
+      TriangularMesh::VertexNormalMode vertexNormalMode,
       TriangularMesh::FaceNormalMode faceNormalMode) {
-    // TODO: Implement this.
+    _instance = std::make_unique<TriangularMesh>();
+    _instance->_vertexNormalMode = vertexNormalMode;
+    _instance->_faceNormalMode = faceNormalMode;
   }
 
   TriangularMesh::Builder& TriangularMesh::Builder::addVertex(const Vector3& v) {
@@ -100,7 +113,9 @@ namespace hd {
   }
 
   TriangularMesh* TriangularMesh::Builder::build(bool populate) {
-    // TODO: Implement this.
+    if (populate && !_instance->isPopulated()) {
+      _instance->populate();
+    }
     return _instance.release();
   }
 }

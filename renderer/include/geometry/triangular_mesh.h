@@ -9,6 +9,7 @@
 #include "geometry/bounding_box3.h"
 #include "geometry/has_surface_area.h"
 #include "geometry/has_bounding_box3.h"
+#include "geometry/triangle3.h"
 
 namespace hd {
   /**
@@ -116,6 +117,26 @@ namespace hd {
       PHONG
     };
 
+    /**
+     * A descriptor for any point on the triangular mesh, represented by a face index and
+     * parametric representation of the point. More specifically, if the face f is formed by
+     * vertex v0, v1 and v2 (in this order), the representation of a point on this face,
+     * (f, a, b, c) represents the point a * v0 + b * v1 + c * v2.
+     * Note that 0 <= a, b, c <= 1 and a + b + c = 1 must be hold.
+     * Also, users of this class should never care about the order and value of the parameters
+     * as it's closely related to the representation of its belonging triangular mesh, whose
+     * order of vertices in a face is also an internal data.
+     */
+    class MeshPoint {
+      private:
+        unsigned int faceId;
+        Vector3 params;
+      public:
+        MeshPoint(unsigned int fid, const Vector3& p): faceId(fid), params(p) {}
+        MeshPoint(const MeshPoint& p): faceId(p.faceId), params(p.params) {}
+        ~MeshPoint() {}
+    };
+
     private:
       std::vector<Vertex> _vertices;
       std::vector<Edge> _edges;
@@ -126,21 +147,29 @@ namespace hd {
       FaceNormalMode _faceNormalMode;
     
     public:
+      friend class Builder;
+      TriangularMesh();
       TriangularMesh(const TriangularMesh& mesh);
       ~TriangularMesh();
       class Builder;
       static Builder newBuilder(
           VertexNormalMode vertexNormalMode,
           FaceNormalMode faceNormalMode);
-    private:
-      TriangularMesh();
 
     public:
       // Get vertex/face/edge at given index. We intentioanlly made these method names
       // super short because they're heavily used in long chaining calls.
       Vertex v(unsigned int index) const;
       Face f(unsigned int index) const;
-      Edge e(unsigned int Edge) const;
+      Edge e(unsigned int index) const;
+      // Get a full descriptor for face at a given index.
+      // Note: User specified or averaged face/vertex normals are not included in the 
+      // returned shape descriptor. This return value assumes a triangle with natually defined
+      // face normal.
+      Triangle3 triangle(unsigned int index) const;
+      // Calculate the interpolated normal vector for any point on the manifold.
+      friend class MeshPoint;
+      Vector3 normal(const MeshPoint& p) const;
 
       // Get number of vertices/edges/faces.
       unsigned int vertexNum() const;
@@ -165,7 +194,7 @@ namespace hd {
         std::unique_ptr<TriangularMesh> _instance;
 
       public:
-        Builder(VertexNormalMode vertexNormalNode, FaceNormalMode faceNormalMode);
+        Builder(VertexNormalMode vertexNormalMode, FaceNormalMode faceNormalMode);
 
         // Add a vertex. For this method and the method below, the order of vertex insertion
         // determined vertex index (or ID). Please make sure you're inserting vertices as the
