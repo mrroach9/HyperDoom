@@ -147,14 +147,15 @@ namespace hd {
       FaceNormalMode _faceNormalMode;
     
     public:
-      friend class Builder;
-      TriangularMesh();
       TriangularMesh(const TriangularMesh& mesh);
       ~TriangularMesh();
       class Builder;
       static Builder newBuilder(
           VertexNormalMode vertexNormalMode,
           FaceNormalMode faceNormalMode);
+    private:
+      friend class Builder;
+      TriangularMesh();
 
     public:
       // Get vertex/face/edge at given index. We intentioanlly made these method names

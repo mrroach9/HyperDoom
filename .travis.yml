@@ -23,8 +23,8 @@ before_script:
 
 script:
 - cmake ..
-- make
-- make CTEST_OUTPUT_ON_FAILURE=1 test
+- make VERBOSE=1
+- make CTEST_OUTPUT_ON_FAILURE=1 VERBOSE=1 test
 
 notifications:
 - email: false

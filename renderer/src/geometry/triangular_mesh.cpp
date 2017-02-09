@@ -84,7 +84,7 @@ namespace hd {
   TriangularMesh::Builder::Builder(
       TriangularMesh::VertexNormalMode vertexNormalMode,
       TriangularMesh::FaceNormalMode faceNormalMode) {
-    _instance = std::make_unique<TriangularMesh>();
+    _instance = std::unique_ptr<TriangularMesh>(new TriangularMesh());
     _instance->_vertexNormalMode = vertexNormalMode;
     _instance->_faceNormalMode = faceNormalMode;
   }
