@@ -3,11 +3,22 @@
 
 namespace hd {
   TriangularMesh::TriangularMesh() {
-    // TODO: Implement this.
+    _vertices.clear();
+    _edges.clear();
+    _faces.clear();
+    _isPopulated = false;
+    _vertexNormalMode = TriangularMesh::VertexNormalMode::AVERAGED;
+    _faceNormalMode = TriangularMesh::FaceNormalMode::FLAT;
   }
 
   TriangularMesh::TriangularMesh(const TriangularMesh& mesh) {
-    // TODO: Implement this.
+    _vertices.insert(_vertices.end(), mesh._vertices.begin(), mesh._vertices.end());
+    _edges.insert(_edges.end(), mesh._edges.begin(), mesh._edges.end());
+    _faces.insert(_faces.end(), mesh._faces.begin(), mesh._faces.end());
+    _isPopulated = mesh._isPopulated;
+    _boundingBox = mesh._boundingBox;
+    _vertexNormalMode = mesh._vertexNormalMode;
+    _faceNormalMode = mesh._faceNormalMode;
   }
 
   TriangularMesh::~TriangularMesh() {
@@ -50,11 +61,18 @@ namespace hd {
   }
 
   Triangle3 TriangularMesh::triangle(unsigned int index) const {
-    // TODO: Implement this.
-    return Triangle3();
+    assert(isPopulated());
+    assert(index < faceNum());
+    auto f = _faces[index];
+    auto faceVertices = std::array<Vector3, 3>();
+    for (int vInd = 0; vInd < 3; ++vInd) {
+      faceVertices[vInd] = v(f.vertices[vInd]).pos;
+    }
+    return Triangle3(faceVertices);
   }
 
   Vector3 TriangularMesh::normal(const TriangularMesh::MeshPoint& p) const {
+    assert(isPopulated());
     // TODO: Implement this.
     return Vector3();
   }
@@ -90,25 +108,33 @@ namespace hd {
   }
 
   TriangularMesh::Builder& TriangularMesh::Builder::addVertex(const Vector3& v) {
-    // TODO: Implement this.
+    assert(_instance->vertexNormalMode() != TriangularMesh::VertexNormalMode::USER_SPECIFIED);
+    assert(!_instance->isPopulated());
+    _instance->_vertices.push_back(TriangularMesh::Vertex(v));
     return *this;
   }
 
   TriangularMesh::Builder& TriangularMesh::Builder::addVertex(
       const Vector3& v, const Vector3& vn) {
-    // TODO: Implement this.
+    assert(_instance->vertexNormalMode() == TriangularMesh::VertexNormalMode::USER_SPECIFIED);
+    assert(!_instance->isPopulated());
+    _instance->_vertices.push_back(TriangularMesh::Vertex(v, vn));
     return *this;
   }
 
   TriangularMesh::Builder& TriangularMesh::Builder::addFace(
       const std::array<unsigned int, 3>& face) {
-    // TODO: Implement this.
+    assert(_instance->faceNormalMode() != TriangularMesh::FaceNormalMode::USER_SPECIFIED);
+    assert(!_instance->isPopulated());
+    _instance->_faces.push_back(TriangularMesh::Face(face));
     return *this;
   }
 
   TriangularMesh::Builder& TriangularMesh::Builder::addFace(
       const std::array<unsigned int, 3>& face, const Vector3& fn) {
-    // TODO: Implement this.
+    assert(_instance->faceNormalMode() == TriangularMesh::FaceNormalMode::USER_SPECIFIED);
+    assert(!_instance->isPopulated());
+    _instance->_faces.push_back(TriangularMesh::Face(face, fn));
     return *this;
   }
 

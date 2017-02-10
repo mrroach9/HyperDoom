@@ -34,9 +34,7 @@ namespace hd {
    * TriangularMesh::Builder (except for copy constructor).
    */
 
-  // TODO: add constructors and property methods for Vertex/Edge/Face.
   // TODO: add ser/des solutions.
-  // TODO: add Triangle3 class and getTriangle() method.
   class TriangularMesh : public HasBoundingBox3 {
     /**
      * Definitions of vertices of DCEL.
@@ -50,6 +48,9 @@ namespace hd {
         Vector3 normal;
         // A list of indices of half-edges started from this vertex (outgoing).
         std::vector<unsigned int> edgeList;
+      public:
+        Vertex(const Vector3& p): pos(p) {}
+        Vertex(const Vector3& p, const Vector3& n): pos(p), normal(n) {}
     };
 
     /**
@@ -82,6 +83,10 @@ namespace hd {
         // rely on edge.nextEdge to traverse the face.
         std::array<unsigned int, 3> edges;
         Vector3 normal;
+      public:
+        Face(const std::array<unsigned int, 3>& vid): vertices(vid) {}
+        Face(const std::array<unsigned int, 3>& vid, const Vector3& fn)
+            : vertices(vid), normal(fn) {}
     };
 
     /**
