@@ -47,7 +47,7 @@ namespace hd {
         // normal interpolation.
         Vector3 normal;
         // A list of indices of half-edges started from this vertex (outgoing).
-        std::vector<unsigned int> edgeList;
+        std::vector<unsigned int> edges;
       public:
         Vertex(const Vector3& p): pos(p) {}
         Vertex(const Vector3& p, const Vector3& n): pos(p), normal(n) {}
@@ -69,6 +69,9 @@ namespace hd {
         // Index of the next edge, which belongs to the same face as this one, and starts
         // from the end vertex of this edge.
         unsigned int nextEdge;
+        // Index of the prev edge, which belongs to the same face as this one, and ends
+        // at the start vertex of this edge.
+        unsigned int prevEdge;
     };
 
     /**
@@ -195,6 +198,11 @@ namespace hd {
       void populate();
       bool isPopulated() const;
     
+    private:
+      void _populateEdges();
+      void _populateNormals();
+    
+    public:
     class Builder {
       private:
         std::unique_ptr<TriangularMesh> _instance;

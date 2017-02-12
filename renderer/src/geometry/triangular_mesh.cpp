@@ -1,4 +1,5 @@
 #include "geometry/triangular_mesh.h"
+#include "const.h"
 #include <cassert>
 
 namespace hd {
@@ -84,7 +85,48 @@ namespace hd {
   }
 
   void TriangularMesh::populate() {
-    // TODO: Implement this.
+    assert(!isPopulated());
+    _populateEdges();
+    _populateNormals();
+    _isPopulated = true;
+  }
+
+  void TriangularMesh::_populateEdges() {
+    // Generate all edges. Update edge lists of vertices and faces.
+    _edges.resize(_faces.size() * 3);
+    for (unsigned int fid = 0; fid < _faces.size(); ++fid) {
+      auto face = _faces[fid];
+      for (unsigned int eid = 0; eid < 3; ++eid) {
+        unsigned int edgeId = fid * 3 + eid;
+        TriangularMesh::Edge edge = TriangularMesh::Edge();
+        edge.startVertex = face.vertices[eid];
+        edge.endVertex = face.vertices[(eid + 1) % 3];
+        edge.face = fid;
+        edge.nextEdge = fid * 3 + (eid + 1) % 3;
+        // prev edge should be (eid - 1) % 3. To avoid overflow when eid is 0, we instead
+        // use (eid + 4) % 3.
+        edge.prevEdge = fid * 3 + (eid + 4) % 3;
+        _edges[edgeId] = edge;
+        _faces[fid].edges[eid] = edgeId;
+        _vertices[edge.startVertex].edges.push_back(edgeId);
+      }
+    }
+    // Rescan all edges, and populate twin edges.
+    for (unsigned int eid = 0; eid < _edges.size(); ++eid) {
+      unsigned int startVertex = _edges[eid].startVertex;
+      unsigned int endVertex = _edges[eid].endVertex;
+      for (unsigned int revEdgeId : _vertices[endVertex].edges) {
+        if (_edges[revEdgeId].endVertex == startVertex) {
+          _edges[eid].twinEdge = revEdgeId;
+          break;
+        }
+        _edges[eid].twinEdge = HD_INVALID_ID;
+      }
+    }
+  }
+
+  void TriangularMesh::_populateNormals() {
+    // TODO: implement this.
   }
 
   bool TriangularMesh::isPopulated() const {
