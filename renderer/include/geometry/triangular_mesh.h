@@ -140,6 +140,7 @@ namespace hd {
         unsigned int faceId;
         Vector3 params;
       public:
+        friend TriangularMesh;
         MeshPoint(unsigned int fid, const Vector3& p): faceId(fid), params(p) {}
         MeshPoint(const MeshPoint& p): faceId(p.faceId), params(p.params) {}
         ~MeshPoint() {}
@@ -201,6 +202,7 @@ namespace hd {
     private:
       void _populateEdges();
       void _populateNormals();
+      void _populateBoundingBox();
     
     public:
     class Builder {

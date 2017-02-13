@@ -16,5 +16,7 @@
 // therefore this value should usually be converted to very large numbers (2^32-1 or 2^64-1),
 // which is rarely reached and thus serve as an invalid id.
 #define HD_INVALID_ID (-1)
+// A sufficiently large number representing (positive) infinity.
+#define HD_INFINITY (1e20)
 
 #endif // _CONST_H_

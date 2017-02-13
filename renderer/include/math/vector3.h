@@ -53,9 +53,9 @@ namespace hd {
 
       // Get component with index. 0 - x, 1 - y, 2 - z.
       // Passing in index other than 0, 1, 2 will cause assertion error.
+      double& operator[](int index);
       double operator[](int index) const;
       std::array<double, 3> toArray() const;
-      void set(int index, double value);
 
     // Vector specific operations.
     public:

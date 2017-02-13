@@ -53,6 +53,7 @@ namespace hd {
       // Getters and setters via indices.
       // Get n-th row with []
       Vector3 operator[](int rowInd) const;
+      // TODO: rewrite this class to provide l-value [] operator.
       // Set row at given index.
       void set(int rowInd, Vector3& row);
       // Set value at given row and column indices.

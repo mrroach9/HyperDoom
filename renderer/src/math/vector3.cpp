@@ -61,25 +61,19 @@ namespace hd {
     return lhs;
   }
 
-  double Vector3::operator[](int index) const {
+  double& Vector3::operator[](int index) {
     assert(index >= 0 && index <= 2);
     return index == 0 ? x : (index == 1 ? y : z);
+  }
+
+  double Vector3::operator[](int index) const {
+    assert(index >= 0 && index <= 2);
+    return index == 0 ? x : (index == 1 ? y : z);    
   }
 
   std::array<double, 3> Vector3::toArray() const {
     std::array<double, 3> a = {x, y, z};
     return a;
-  }
-
-  void Vector3::set(int index, double value) {
-    assert(index >= 0 && index <= 2);
-    if (index == 0) {
-      x = value;
-    } else if (index == 1) {
-      y = value;
-    } else {
-      z = value;
-    }
   }
 
   double operator*(const Vector3& lhs, const Vector3& rhs) {

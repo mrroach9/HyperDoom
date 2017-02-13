@@ -58,9 +58,9 @@ TEST(Vector3Test, TestIndices) {
   EXPECT_EQ(a[0], 1.0);
   EXPECT_EQ(a[1], 2.0);
   EXPECT_EQ(a[2], 3.0);
-  v.set(0, 11.0);
-  v.set(1, 12.0);
-  v.set(2, 13.0);
+  v[0] = 11.0;
+  v[1] = 12.0;
+  v[2] = 13.0;
   EXPECT_TRUE(v == hd::Vector3(11.0, 12.0, 13.0));
 }
 

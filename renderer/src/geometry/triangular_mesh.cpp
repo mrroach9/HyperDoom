@@ -74,8 +74,15 @@ namespace hd {
 
   Vector3 TriangularMesh::normal(const TriangularMesh::MeshPoint& p) const {
     assert(isPopulated());
-    // TODO: Implement this.
-    return Vector3();
+    assert(p.faceId < faceNum());
+    if (_faceNormalMode != TriangularMesh::FaceNormalMode::PHONG) {
+      return f(p.faceId).normal;
+    }
+    Vector3 avgNormal = Vector3::zero();
+    for (unsigned int i = 0; i < 3; ++i) {
+      avgNormal += p.params[i] * v(f(p.faceId).vertices[i]).pos;
+    }
+    return avgNormal.normalize();
   }
 
 
@@ -88,6 +95,7 @@ namespace hd {
     assert(!isPopulated());
     _populateEdges();
     _populateNormals();
+    _populateBoundingBox();
     _isPopulated = true;
   }
 
@@ -126,7 +134,48 @@ namespace hd {
   }
 
   void TriangularMesh::_populateNormals() {
-    // TODO: implement this.
+    if (_faceNormalMode != TriangularMesh::FaceNormalMode::USER_SPECIFIED) {
+      // Calculate natual normals if face normal mdoe is not user-specified. Although this will
+      // not be used for Phong interpolation mode, it is still reqired as an intermeidate step
+      // to calculate averaged vertex normals.
+      for (unsigned int fid = 0; fid < faceNum(); ++fid) {
+        auto f = _faces[fid];
+        Vector3 e0 = v(f.vertices[1]).pos - v(f.vertices[0]).pos;
+        Vector3 e1 = v(f.vertices[2]).pos - v(f.vertices[1]).pos;
+        Vector3 n = e0 ^ e1;
+        assert(n.len2() > HD_EPSILON_TINY);
+        _faces[fid].normal = n.normalize();
+      }
+    }
+    if (_vertexNormalMode != TriangularMesh::VertexNormalMode::USER_SPECIFIED) {
+      for (unsigned int vid = 0; vid < vertexNum(); ++vid) {
+        Vector3 sumOfFaceNormals = Vector3::zero();
+        // Vertex does not directly store all of its adjacent faces. Instead, we go through
+        // every edge starts from it, whose belonging faces must be adjacent to this vertex.
+        for (unsigned int eid : v(vid).edges) {
+          sumOfFaceNormals += f(e(eid).face).normal;
+        }
+        // We don't need to devide sum vector by number of edges: normalization will just include
+        // this procedure.
+        _vertices[vid].normal = sumOfFaceNormals.normalize();
+      }
+    }
+  }
+
+  void TriangularMesh::_populateBoundingBox() {
+    Vector3 minBound = Vector3::identity(HD_INFINITY);
+    Vector3 maxBound = Vector3::identity(-HD_INFINITY);
+    for (auto v : _vertices) {
+      for (unsigned int i = 0; i < 3; ++i) {
+        if (v.pos[i] < minBound[i]) {
+          minBound[i] = v.pos[i];
+        }
+        if (v.pos[i] > maxBound[i]) {
+          maxBound[i] = v.pos[i];
+        }
+      }
+    }
+    _boundingBox = BoundingBox3(minBound, maxBound);
   }
 
   bool TriangularMesh::isPopulated() const {
