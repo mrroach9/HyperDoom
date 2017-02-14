@@ -63,10 +63,10 @@ TEST_F(Matrix3Test, TestGettersAndSettersViaIndices) {
   EXPECT_EQ(m1[0][0], 1.0);
   EXPECT_EQ(m1[2][1], 8.0);
   hd::Vector3 v = hd::Vector3(-1.0, -2.0, -3.0);
-  m1.set(2, v);
+  m1[2] = v;
   EXPECT_EQ(m1[2][0], -1.0);
   EXPECT_EQ(m1[2][1], -2.0);
-  m1.set(1, 0, -100.0);
+  m1[1][0] = -100.0;
   EXPECT_EQ(m1[1], hd::Vector3(-100.0, 5.0, 6.0));
 }
 
@@ -102,7 +102,7 @@ TEST_F(Matrix3Test, TestAdvancedOperations) {
 
   // Verifies the value of determinant calculation.
   EXPECT_EQ(m1.det(), 0.0);
-  m1.set(2, 2, 10.0);
+  m1[2][2] = 10.0;
   EXPECT_EQ(m1.det(), -3.0);
   EXPECT_EQ(hd::Matrix3::diag(3.0).det(), 27.0);
 }

@@ -12,7 +12,7 @@ namespace hd {
    */
   class Matrix3 {
     private:
-      std::array<std::array<double, 3>, 3> _mat;
+      std::array<Vector3, 3> _mat;
   
     // Constructors, destructors and initiators.
     public:
@@ -53,11 +53,7 @@ namespace hd {
       // Getters and setters via indices.
       // Get n-th row with []
       Vector3 operator[](int rowInd) const;
-      // TODO: rewrite this class to provide l-value [] operator.
-      // Set row at given index.
-      void set(int rowInd, Vector3& row);
-      // Set value at given row and column indices.
-      void set(int rowInd, int colInd, double val);
+      Vector3& operator[](int rowInd);
 
       // Comparison within error bounds.
       friend bool operator==(const Matrix3& lhs, const Matrix3& rhs);

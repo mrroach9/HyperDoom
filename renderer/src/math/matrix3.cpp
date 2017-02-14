@@ -8,17 +8,17 @@
 
 namespace hd {
   Matrix3::Matrix3() {
-    _mat[0] = std::array<double, 3> {0.0, 0.0, 0.0};
-    _mat[1] = std::array<double, 3> {0.0, 0.0, 0.0};
-    _mat[2] = std::array<double, 3> {0.0, 0.0, 0.0};
+    _mat[0] = Vector3::zero();
+    _mat[1] = Vector3::zero();
+    _mat[2] = Vector3::zero();
   }
 
   Matrix3::Matrix3(std::array<double, 3> row1,
       std::array<double, 3> row2,
       std::array<double, 3> row3) {
-    _mat[0] = row1;
-    _mat[1] = row2;
-    _mat[2] = row3;
+    _mat[0] = Vector3(row1);
+    _mat[1] = Vector3(row2);
+    _mat[2] = Vector3(row3);
   }
 
   Matrix3 Matrix3::diag(double s) {
@@ -26,10 +26,7 @@ namespace hd {
   }
 
   Matrix3 Matrix3::crossProdMatOf(const Vector3& v) {
-    return Matrix3(
-        std::array<double, 3> {0, -v.z, v.y},
-        std::array<double, 3> {v.z, 0, -v.x},
-        std::array<double, 3> {-v.y, v.x, 0});
+    return Matrix3(Vector3(0, -v.z, v.y), Vector3(v.z, 0, -v.x), Vector3(-v.y, v.x, 0));
   }
 
   Matrix3& Matrix3::operator+=(const Matrix3& rhs) {
@@ -117,18 +114,12 @@ namespace hd {
 
   Vector3 Matrix3::operator[](int rowInd) const {
     assert(rowInd >= 0 && rowInd <= 2);
-    return Vector3(_mat[rowInd]);
+    return _mat[rowInd];
   }
 
-  void Matrix3::set(int rowInd, Vector3& row) {
+  Vector3& Matrix3::operator[](int rowInd) {
     assert(rowInd >= 0 && rowInd <= 2);
-    _mat[rowInd] = row.toArray();
-  }
-
-  void Matrix3::set(int rowInd, int colInd, double val) {
-    assert(rowInd >= 0 && rowInd <= 2);
-    assert(colInd >= 0 && colInd <= 2);
-    _mat[rowInd][colInd] = val;
+    return _mat[rowInd];
   }
 
   bool operator==(const Matrix3& lhs, const Matrix3& rhs) {
