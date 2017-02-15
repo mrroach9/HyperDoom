@@ -112,8 +112,8 @@ namespace hd {
         edge.face = fid;
         edge.nextEdge = fid * 3 + (eid + 1) % 3;
         // prev edge should be (eid - 1) % 3. To avoid overflow when eid is 0, we instead
-        // use (eid + 4) % 3.
-        edge.prevEdge = fid * 3 + (eid + 4) % 3;
+        // use (eid + 2) % 3.
+        edge.prevEdge = fid * 3 + (eid + 2) % 3;
         _edges[edgeId] = edge;
         _faces[fid].edges[eid] = edgeId;
         _vertices[edge.startVertex].edges.push_back(edgeId);
@@ -229,10 +229,11 @@ namespace hd {
     return *this;
   }
 
-  TriangularMesh* TriangularMesh::Builder::build(bool populate) {
+  std::unique_ptr<TriangularMesh> TriangularMesh::Builder::build(bool populate) {
     if (populate && !_instance->isPopulated()) {
       _instance->populate();
     }
-    return _instance.release();
+    auto ptr = std::unique_ptr<TriangularMesh>(_instance.release());
+    return ptr;
   }
 }

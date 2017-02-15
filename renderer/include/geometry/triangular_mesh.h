@@ -36,6 +36,7 @@ namespace hd {
 
   // TODO: add ser/des solutions.
   class TriangularMesh : public HasBoundingBox3 {
+    public:
     /**
      * Definitions of vertices of DCEL.
      */
@@ -203,7 +204,7 @@ namespace hd {
       void _populateEdges();
       void _populateNormals();
       void _populateBoundingBox();
-    
+
     public:
     class Builder {
       private:
@@ -229,7 +230,7 @@ namespace hd {
         // faceNormalMode is USER_SPECIFIED.
         Builder& addFace(const std::array<unsigned int, 3>& face, const Vector3& fn);
       public:
-        TriangularMesh* build(bool populate);
+        std::unique_ptr<TriangularMesh> build(bool populate = true);
     };
   };
 }
