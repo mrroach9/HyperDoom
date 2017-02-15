@@ -163,6 +163,10 @@ namespace hd {
   }
 
   void TriangularMesh::_populateBoundingBox() {
+    if (_vertices.empty()) {
+      _boundingBox = BoundingBox3();
+      return;
+    }
     Vector3 minBound = Vector3::identity(HD_INFINITY);
     Vector3 maxBound = Vector3::identity(-HD_INFINITY);
     for (auto v : _vertices) {
