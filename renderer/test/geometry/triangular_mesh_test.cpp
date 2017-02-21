@@ -3,6 +3,7 @@
 #include "geometry/bounding_box3.h"
 #include "math/vector3.h"
 #include "math/matrix3.h"
+#include "const.h"
 #include <memory>
 #include <set>
 #include <gtest/gtest.h>
@@ -40,64 +41,169 @@ class TriangularMeshTest : public ::testing::Test {
           .build();
       
       tetra2 = TriangularMesh::newBuilder(
-          TriangularMesh::VertexNormalMode::AVERAGED,
-          TriangularMesh::FaceNormalMode::PHONG).build();
+              TriangularMesh::VertexNormalMode::AVERAGED,
+              TriangularMesh::FaceNormalMode::PHONG)
+          .addVertex(Vector3(0, 0, 0))
+          .addVertex(Vector3(1, 0, 0))
+          .addVertex(Vector3(0, 1, 0))
+          .addVertex(Vector3(0, 0, 1))
+          .addFace({1, 0, 2})
+          .addFace({1, 3, 0})
+          .addFace({0, 3, 2})
+          .addFace({1, 2, 3})
+          .build();
 
+      //   0---1---2
+      //   |  /|  /|
+      //   | / | / |
+      //   |/  |/  |
+      //   3---4---5
+      //   |  /|  /|
+      //   | / | / |
+      //   |/  |/  |
+      //   6---7---8
       plane1 = TriangularMesh::newBuilder(
           TriangularMesh::VertexNormalMode::USER_SPECIFIED,
-          TriangularMesh::FaceNormalMode::FLAT).build();
+          TriangularMesh::FaceNormalMode::FLAT)
+          .addVertex(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(2.0, 0.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(1.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(2.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(0.0, 2.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(1.0, 2.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(2.0, 2.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addFace({0, 3, 1})
+          .addFace({1, 4, 2})
+          .addFace({1, 3, 4})
+          .addFace({2, 4, 5})
+          .addFace({3, 6, 4})
+          .addFace({4, 7, 5})
+          .addFace({4, 6, 7})
+          .addFace({5, 7, 8})
+          .build();
 
       plane2 = TriangularMesh::newBuilder(
           TriangularMesh::VertexNormalMode::USER_SPECIFIED,
-          TriangularMesh::FaceNormalMode::USER_SPECIFIED).build();
+          TriangularMesh::FaceNormalMode::USER_SPECIFIED)
+          .addVertex(Vector3(0.0, 0.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(2.0, 0.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(0.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(1.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(2.0, 1.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(0.0, 2.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(1.0, 2.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addVertex(Vector3(2.0, 2.0, 0.0), Vector3(0.0, 0.0, 1.0))
+          .addFace({0, 3, 1}, Vector3(0.0, 0.0, 1.0))
+          .addFace({1, 4, 2}, Vector3(0.0, 0.0, 1.0))
+          .addFace({1, 3, 4}, Vector3(0.0, 0.0, 1.0))
+          .addFace({2, 4, 5}, Vector3(0.0, 0.0, 1.0))
+          .addFace({3, 6, 4}, Vector3(0.0, 0.0, 1.0))
+          .addFace({4, 7, 5}, Vector3(0.0, 0.0, 1.0))
+          .addFace({4, 6, 7}, Vector3(0.0, 0.0, 1.0))
+          .addFace({5, 7, 8}, Vector3(0.0, 0.0, 1.0))
+          .build();
     }
 
     virtual void TearDown() {}
+
+    protected:
+      // Attempt to traverse through vertices, edges and faces to verify the structure
+      // of a given mesh, by specifying a vertex id to start with, and an edge index indicating
+      // which edge to start with from the given vertex's outgoing edge list.
+      void verifyTraversal(const unique_ptr<TriangularMesh>& mesh,
+          unsigned int vertexId,
+          const Vector3& expectedPos,
+          unsigned int expectedDegree,
+          unsigned int edgeIndexFromVertex,
+          bool expectedHasTwinEdge) {
+        // Pick the vertex and verify its position and degrees.
+        EXPECT_EQ(mesh->v(vertexId).pos, expectedPos);
+        EXPECT_EQ(mesh->v(vertexId).edges.size(), expectedDegree);
+
+        // Pick the edge from selected vertex and start traversing.
+        unsigned int eid = mesh->v(vertexId).edges[edgeIndexFromVertex];
+        EXPECT_EQ(mesh->e(eid).startVertex, vertexId);
+        unsigned int endVertex = mesh->e(eid).endVertex;
+
+        // Verify twin edge and its start/end vertices being reverse of the original edge.
+        unsigned int twinEid = mesh->e(eid).twinEdge;
+        if (expectedHasTwinEdge) {
+          EXPECT_EQ(mesh->e(twinEid).startVertex, endVertex);
+          EXPECT_EQ(mesh->e(twinEid).endVertex, vertexId);
+        } else {
+          EXPECT_EQ(twinEid, HD_INVALID_ID);
+        }
+        
+        // Verify next and prev edges.
+        unsigned int nextEid = mesh->e(eid).nextEdge;
+        unsigned int prevEid = mesh->e(eid).prevEdge;
+        EXPECT_EQ(mesh->e(nextEid).startVertex, endVertex);
+        EXPECT_EQ(mesh->e(nextEid).endVertex, mesh->e(prevEid).startVertex);
+        EXPECT_EQ(mesh->e(prevEid).endVertex, vertexId);
+      
+        // Verify face info.
+        unsigned int fid = mesh->e(eid).face;
+        TriangularMesh::Face face = mesh->f(fid);
+        // Verify the vertices of the face is exactly the same set of vertices traversed
+        // previously with next and prev edges. Same for edges.
+        auto vertices = set<unsigned int>(face.vertices.cbegin(), face.vertices.cend());
+        EXPECT_EQ(vertices,
+            set<unsigned int>({vertexId, endVertex, mesh->e(nextEid).endVertex}));
+        auto edges = set<unsigned int>(face.edges.cbegin(), face.edges.cend());
+        EXPECT_EQ(edges, set<unsigned int>({eid, nextEid, prevEid}));
+      }
+        
 };
 
-TEST_F(TriangularMeshTest, TestGeometryStructureAccess) {
+TEST_F(TriangularMeshTest, TestGeometryStructureTraversal_tetra1) {
   EXPECT_EQ(tetra1->vertexNum(), 4);
   EXPECT_EQ(tetra1->edgeNum(), 12);
   EXPECT_EQ(tetra1->faceNum(), 4);
+  verifyTraversal(tetra1, 1, /* vertex id */
+      Vector3(1.0, 0.0, 0.0), /* expected pos */
+      3, /* expected degree */
+      2, /* edge index from picked vertex */
+      true /* should have a twin edge */);
+}
 
-  // Pick a random node, verify its position and degrees.
-  unsigned int vertexId = 1;
-  EXPECT_EQ(tetra1->v(vertexId).pos, Vector3(1.0, 0.0, 0.0));
-  EXPECT_EQ(tetra1->v(vertexId).edges.size(), 3);
-
-  // Pick a random edge starting that, and start traversing.
-  unsigned int edgeIndex = 2;
-  unsigned int eid = tetra1->v(vertexId).edges[edgeIndex];
-  EXPECT_EQ(tetra1->e(eid).startVertex, vertexId);
-  unsigned int endVertex = tetra1->e(eid).endVertex;
-
-  // Verify twin edge.
-  unsigned int twinEid = tetra1->e(eid).twinEdge;
-  EXPECT_EQ(tetra1->e(twinEid).startVertex, endVertex);
-  EXPECT_EQ(tetra1->e(twinEid).endVertex, vertexId);
-  
-  // Verify next and prev edges.
-  unsigned int nextEid = tetra1->e(eid).nextEdge;
-  unsigned int prevEid = tetra1->e(eid).prevEdge;
-  EXPECT_EQ(tetra1->e(nextEid).startVertex, endVertex);
-  EXPECT_EQ(tetra1->e(nextEid).endVertex, tetra1->e(prevEid).startVertex);
-  EXPECT_EQ(tetra1->e(prevEid).endVertex, vertexId);
- 
-  // Verify face info.
-  unsigned int fid = tetra1->e(eid).face;
-  TriangularMesh::Face face = tetra1->f(fid);
-  auto vertices = set<unsigned int>(face.vertices.cbegin(), face.vertices.cend());
-  EXPECT_EQ(vertices,
-      set<unsigned int>({vertexId, endVertex, tetra1->e(nextEid).endVertex}));
-  auto edges = set<unsigned int>(face.edges.cbegin(), face.edges.cend());
-  EXPECT_EQ(edges, set<unsigned int>({eid, nextEid, prevEid}));
+TEST_F(TriangularMeshTest, TestGeometryStructureTraversal_plane1) {
+  EXPECT_EQ(plane1->vertexNum(), 9);
+  EXPECT_EQ(plane1->edgeNum(), 24);
+  EXPECT_EQ(plane1->faceNum(), 8);
+  verifyTraversal(plane1, 4, /* vertex id */
+      Vector3(1.0, 1.0, 0.0), /* expected pos */
+      6, /* expected degree */
+      3, /* edge index from picked vertex */
+      true /* should have a twin edge */);
+  verifyTraversal(plane1, 8, /* vertex id */
+      Vector3(2.0, 2.0, 0.0), /* expected pos */
+      1, /* expected degree */
+      0, /* edge index from picked vertex */
+      false /* should not have a twin edge */);
 }
 
 TEST_F(TriangularMeshTest, TestGetTriangles) {
+  Triangle3 tri1 = Triangle3(Vector3(1, 0, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
+  EXPECT_EQ(tetra1->triangle(0), tri1);
+  Triangle3 tri2 = Triangle3(Vector3(1, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 1));
+  EXPECT_EQ(tetra2->triangle(3), tri2);
 
+  Triangle3 tri3 = Triangle3(Vector3(2, 0, 0), Vector3(1, 1, 0), Vector3(2, 1, 0));
+  EXPECT_EQ(plane1->triangle(3), tri3);
+  EXPECT_EQ(plane2->triangle(3), tri3);
 }
 
 TEST_F(TriangularMeshTest, TestBoundingBox) {
+  BoundingBox3 box1 = BoundingBox3(Vector3(0, 0, 0), Vector3(1, 1, 1));
+  EXPECT_EQ(tetra1->boundingBox3(), box1);
+  EXPECT_EQ(tetra2->boundingBox3(), box1);
+
+  BoundingBox3 box2 = BoundingBox3(Vector3(0, 0, 0), Vector3(2, 2, 0));
+  EXPECT_EQ(plane1->boundingBox3(), box2);
+  EXPECT_EQ(plane2->boundingBox3(), box2);
 }
 
 TEST_F(TriangularMeshTest, TestNormalInterpolation) {
