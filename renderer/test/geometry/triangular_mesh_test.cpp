@@ -207,5 +207,29 @@ TEST_F(TriangularMeshTest, TestBoundingBox) {
 }
 
 TEST_F(TriangularMeshTest, TestNormalInterpolation) {
+  // p1 is the center of the equiliterral triangle face of the tetrahedon.
+  TriangularMesh::MeshPoint p1 = TriangularMesh::MeshPoint(3, Vector3::one() / 3.0);
+  // p2 is a point on the triangle of the tetrahedon lying on xOy plane. 
+  TriangularMesh::MeshPoint p2 = TriangularMesh::MeshPoint(0, Vector3(0.6, 0.3, 0.1));
 
+  EXPECT_EQ(tetra1->pos(p1), Vector3::one() / 3.0);
+  EXPECT_EQ(tetra2->pos(p1), Vector3::one() / 3.0);
+  EXPECT_EQ(tetra1->normal(p1), Vector3::one().normalize());
+  EXPECT_EQ(tetra2->normal(p1), -1 * Vector3::one().normalize());
+
+  EXPECT_EQ(tetra1->pos(p2), Vector3(0.6, 0.1, 0.0));
+  EXPECT_EQ(tetra2->pos(p2), Vector3(0.6, 0.1, 0.0));
+  EXPECT_EQ(tetra1->normal(p2), -1 * Vector3::zUnit());
+  // Normal at p2 n = 0.6 * n1 + 0.3 * n0 + 0.1 * n2
+  // n1 = (fn0 + fn1 + fn3).normalize()
+  //    = ((0, 0, -1) + (0, -1, 0) + (1, 1, 1).normalize()).normalze()
+  //    = (0.6947465906, -0.5085898027, -0.5085898027)
+  // n2 = (fn0 + fn2 + fn3).normalize()
+  //    = (-0.5085898027, 0.6947465906, -0.5085898027)
+  // n0 = (fn0 + fn1 + fn2).normalize()
+  //    = (-1, -1, -1).normalize()
+  //    = (-0.5773502692, -0.5773502692, -0.5773502692)
+  // n  = (0.19278389333, -0.40888430332, -0.52921794265).normalize
+  //    = (0.2769861700, -0.5874728184, -0.7603646160)
+  EXPECT_EQ(tetra2->normal(p2), Vector3(0.2769861700, -0.5874728184, -0.7603646160));
 }

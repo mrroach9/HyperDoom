@@ -102,6 +102,12 @@ namespace hd {
       // Normal of a vertex is calculated by averaging normals of all its adjacent faces.
       // If face normals are provided by users, we use the provided value. Otherwise
       // We use the flat normal (the unit normal vector orthoganal to the face).
+      // TODO: There is actually a huge problem with averaged vertex normal, that the averaged
+      // normal n might be below some triangle, that is: for some n_i that is a flat surface normal
+      // adjacent to this vertex, n * n_i < 0. Using such averaged normal might cause 
+      // Phong-interpolated normal on such face be completely on the wrong direction. Forcing
+      // the normal to be negated will then cause discontinuity of the normal field across the
+      // mesh.
       AVERAGED
     };
 
@@ -178,9 +184,14 @@ namespace hd {
       // returned shape descriptor. This return value assumes a triangle with natually defined
       // face normal.
       Triangle3 triangle(unsigned int index) const;
-      // Calculate the interpolated normal vector for any point on the manifold.
       friend class MeshPoint;
+      // Calculate the interpolated normal vector for any point on the manifold.
       Vector3 normal(const MeshPoint& p) const;
+      // Calculate the coordinate of a given point on mesh, by specifying its belonging face id
+      // and interpolated weights. E.g. if face f consists of point v1, v2, v3. Then calling
+      // pos(Meshpoint(f, {a, b, c})) with 0 <= a, b, c <= 1 and a + b + c = 1 will return:
+      //    a * v1 + b * b2 + c * v3.
+      Vector3 pos(const MeshPoint& p) const;
 
       // Get number of vertices/edges/faces.
       unsigned int vertexNum() const;

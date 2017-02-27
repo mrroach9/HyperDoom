@@ -80,11 +80,20 @@ namespace hd {
     }
     Vector3 avgNormal = Vector3::zero();
     for (unsigned int i = 0; i < 3; ++i) {
-      avgNormal += p.params[i] * v(f(p.faceId).vertices[i]).pos;
+      avgNormal += p.params[i] * v(f(p.faceId).vertices[i]).normal;
     }
     return avgNormal.normalize();
   }
 
+  Vector3 TriangularMesh::pos(const TriangularMesh::MeshPoint& p) const {
+    assert(isPopulated());
+    assert(p.faceId < faceNum());
+    Vector3 pos = Vector3::zero();
+    for (unsigned int i = 0; i < 3; ++i) {
+      pos += p.params[i] * v(f(p.faceId).vertices[i]).pos;
+    }
+    return pos;
+  }
 
   BoundingBox3 TriangularMesh::boundingBox3() const {
     assert(isPopulated());
